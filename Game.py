@@ -1,3 +1,4 @@
+import sys
 import pygame
 
 pygame.init()
@@ -8,6 +9,12 @@ WHITE = (255,255,255)
 
 window_height = 500
 window_width = 700
+
+screen = pygame.display.set_mode((window_width, window_height))
+
+
+bg = pygame.image.load("Textures/Background.png").convert()
+bg = pygame.transform.scale(bg, (window_width, window_height))
 
 player_1_pad_position = 200
 player_2_pad_position = 200
@@ -71,80 +78,126 @@ def reset_ball():
 
 running = True
 
-while running:
+def game():
+    global running, ball_speed_x, ball_speed_y, score_1, score_2
+    while running:
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-    keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_w]:
-        player_1.y -= 5
+        if keys[pygame.K_w]:
+            player_1.y -= 5
 
-    if keys[pygame.K_s]:
-        player_1.y += 5
+        if keys[pygame.K_s]:
+            player_1.y += 5
 
-    if keys[pygame.K_UP]:
-        player_2.y -= 5
+        if keys[pygame.K_UP]:
+            player_2.y -= 5
 
-    if keys[pygame.K_DOWN]:
-        player_2.y += 5
+        if keys[pygame.K_DOWN]:
+            player_2.y += 5
 
-    if player_1.top < 0:
-            player_1.top = 0
+        if player_1.top < 0:
+                player_1.top = 0
 
-    if player_1.bottom > window_height:
-            player_1.bottom = window_height
+        if player_1.bottom > window_height:
+                player_1.bottom = window_height
 
-    if player_2.top < 0:
-            player_2.top = 0
+        if player_2.top < 0:
+                player_2.top = 0
 
-    if player_2.bottom > window_height:
-            player_2.bottom = window_height
+        if player_2.bottom > window_height:
+                player_2.bottom = window_height
 
-    ball.x += ball_speed_x
-    ball.y += ball_speed_y
+        ball.x += ball_speed_x
+        ball.y += ball_speed_y
 
-    if ball.top <= 0 or ball.bottom >= window_height:
-        ball_speed_y *= -1
-        
-    if ball.colliderect(player_1):
-        ball.left = player_1.right
-        ball_speed_x *= -1
+        if ball.top <= 0 or ball.bottom >= window_height:
+            ball_speed_y *= -1
 
-    if ball.colliderect(player_2):
-        ball.right = player_2.left
-        ball_speed_x *= -1
+        if ball.colliderect(player_1):
+            ball.left = player_1.right
+            ball_speed_x *= -1
 
-    if ball.left <=0:
-         score_2 += 1
-         reset_ball()
+        if ball.colliderect(player_2):
+            ball.right = player_2.left
+            ball_speed_x *= -1
 
-    if ball.right >= window_width:
-         score_1 += 1
-         reset_ball()
+        if ball.left <=0:
+             score_2 += 1
+             reset_ball()
 
-    screen.fill(BLACK)
+        if ball.right >= window_width:
+             score_1 += 1
+             reset_ball()
 
-    pygame.draw.rect(screen,WHITE,player_1)
+        screen.blit(bg, (0, 0))
 
-    score_text = font.render(
-         f"{score_1}     {score_2}",
-         True,
-         WHITE
-    )
+        pygame.draw.rect(screen,WHITE,player_1)
 
-    score_rect = score_text.get_rect(center=(window_width // 2, 30))
-    screen.blit(score_text, score_rect)
+        score_text = font.render(
+             f"{score_1}     {score_2}",
+             True,
+             WHITE
+        )
+
+        score_rect = score_text.get_rect(center=(window_width // 2, 30))
+        screen.blit(score_text, score_rect)
 
 
-    pygame.draw.rect(screen,WHITE,player_2)
+        pygame.draw.rect(screen,WHITE,player_2)
 
-    pygame.draw.rect(screen,WHITE,ball)
+        pygame.draw.rect(screen,WHITE,ball)
 
-    pygame.display.update()
+        pygame.display.update()
 
-    clock.tick(60)
+        clock.tick(60)
+
+def start_menu():
+
+    while True:
+
+        screen.blit(bg, (0, 0))
+        mouse = pygame.mouse.get_pos()
+
+        title_text = font.render("PONG", True, WHITE)
+        title_rect = title_text.get_rect(center=(window_width // 2, 100))
+        screen.blit(title_text, title_rect)
+
+        play_button = pygame.Rect(window_width // 2 - 70, window_height // 2 - 25, 140, 50)
+        quit_button = pygame.Rect(window_width // 2 - 70, window_height // 2 + 55, 140, 50)
+
+        pygame.draw.rect(screen, WHITE if play_button.collidepoint(mouse) else BLACK, play_button)
+        pygame.draw.rect(screen, WHITE if quit_button.collidepoint(mouse) else BLACK, quit_button)
+
+        play_text = font.render("Play", True, WHITE)
+        play_rect = play_text.get_rect(center=play_button.center)
+        screen.blit(play_text, play_rect)
+
+        quit_text = font.render("Quit", True, WHITE)
+        quit_rect = quit_text.get_rect(center=quit_button.center)
+        screen.blit(quit_text, quit_rect)
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if play_button.collidepoint(mouse):
+                    game()
+
+                if quit_button.collidepoint(mouse):
+                    pygame.quit()
+                    sys.exit()
+
+        pygame.display.update()
+
+start_menu()
 
 pygame.quit()
