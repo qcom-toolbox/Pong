@@ -5,17 +5,23 @@ pygame.init()
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 
+
+window_height = 500
+window_width = 700
+
+player_2_pad = window_width - 30
+
 player_width = 10
 player_height = 100
 
 ball = pygame.Rect(
-            345,
-            245,
+            window_width // 2 - 5,
+            window_height // 2 - 5,
             10,
             10
     )
 
-size = (700,500)
+size = (window_width,window_height)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Pong")
 
@@ -32,7 +38,7 @@ player_1 = pygame.Rect(
 )
 
 player_2 = pygame.Rect(
-    670,
+    player_2_pad,
     200,
     player_width,
     player_height
@@ -47,7 +53,7 @@ score_2 = 0
 def reset_ball():
     global ball_speed_x, ball_speed_y
 
-    ball.center = (350, 250)
+    ball.center = (window_width // 2, window_height // 2)
 
     ball_speed_x *= -1
     ball_speed_y = 5
@@ -77,19 +83,19 @@ while running:
     if player_1.top < 0:
             player_1.top = 0
 
-    if player_1.bottom > 500:
-            player_1.bottom = 500
+    if player_1.bottom > window_height:
+            player_1.bottom = window_height
 
     if player_2.top < 0:
             player_2.top = 0
 
-    if player_2.bottom > 500:
-            player_2.bottom = 500
+    if player_2.bottom > window_height:
+            player_2.bottom = window_height
 
     ball.x += ball_speed_x
     ball.y += ball_speed_y
 
-    if ball.top <= 0 or ball.bottom >= 500:
+    if ball.top <= 0 or ball.bottom >= window_height:
         ball_speed_y *= -1
         
     if ball.colliderect(player_1):
@@ -104,7 +110,7 @@ while running:
          score_2 += 1
          reset_ball()
 
-    if ball.right >= 700:
+    if ball.right >= window_width:
          score_1 += 1
          reset_ball()
 
@@ -118,7 +124,7 @@ while running:
          WHITE
     )
 
-    screen.blit(score_text,(300,20))
+    screen.blit(score_text,((window_width // 2) - 50, 20))
     
 
 
