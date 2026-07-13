@@ -68,6 +68,11 @@ score_2 = 0
 
 # Reset the ball to the center of the screen and reverse its direction
 
+def reset_score():
+    global score_1, score_2
+    score_1 = 0
+    score_2 = 0
+
 def reset_ball():
     global ball_speed_x, ball_speed_y
 
@@ -146,6 +151,20 @@ def game():
 
         score_rect = score_text.get_rect(center=(window_width // 2, 30))
         screen.blit(score_text, score_rect)
+
+        if score_1 == 10 or score_2 == 10:
+            winner_text = font.render(
+                "Player 1 Wins!" if score_1 == 10 else "Player 2 Wins!",
+                True,
+                WHITE
+            )
+            winner_rect = winner_text.get_rect(center=(window_width // 2, window_height // 2))
+            screen.blit(winner_text, winner_rect)
+            pygame.display.update()
+            pygame.time.delay(3000)
+            reset_score()
+            reset_ball()
+            start_menu()
 
 
         pygame.draw.rect(screen,WHITE,player_2)
