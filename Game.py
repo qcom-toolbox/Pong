@@ -9,6 +9,11 @@ WHITE = (255,255,255)
 window_height = 500
 window_width = 700
 
+player_1_pad_position = 200
+player_2_pad_position = 200
+
+
+player_1_pad = 20
 player_2_pad = window_width - 30
 
 player_width = 10
@@ -25,30 +30,36 @@ size = (window_width,window_height)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Pong")
 
-font = pygame.font.Font(None, 50)
+font = pygame.font.Font('Font/Font.ttf', 50)
 
 clock = pygame.time.Clock()
 
+# Player Variables
+
 player_1 = pygame.Rect(
 
-    20,
-    200,
+    player_1_pad,
+    player_1_pad_position,
     player_width,
     player_height
 )
 
 player_2 = pygame.Rect(
     player_2_pad,
-    200,
+    player_2_pad_position,
     player_width,
     player_height
 )
+
+# Ball speed variables
 
 ball_speed_x = 5
 ball_speed_y = 5
 
 score_1 = 0
 score_2 = 0
+
+# Reset the ball to the center of the screen and reverse its direction
 
 def reset_ball():
     global ball_speed_x, ball_speed_y
@@ -124,8 +135,8 @@ while running:
          WHITE
     )
 
-    screen.blit(score_text,((window_width // 2) - 50, 20))
-    
+    score_rect = score_text.get_rect(center=(window_width // 2, 30))
+    screen.blit(score_text, score_rect)
 
 
     pygame.draw.rect(screen,WHITE,player_2)
