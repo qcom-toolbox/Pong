@@ -7,8 +7,8 @@ BLACK = (0,0,0)
 WHITE = (255,255,255)
 
 
-window_height = 500
-window_width = 700
+window_height = 600
+window_width = 800
 
 screen = pygame.display.set_mode((window_width, window_height))
 
@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((window_width, window_height))
 bg = pygame.image.load("Textures/Background.png").convert()
 bg = pygame.transform.scale(bg, (window_width, window_height))
 
-ts = pygame.image.load("Textures/Title_Screen.png").convert()
+ts = pygame.image.load("Textures/Title_Screen.jar").convert()
 ts = pygame.transform.scale(ts, (window_width, window_height))
 
 ball_texture = pygame.image.load("Textures/Ball.png").convert_alpha()
@@ -42,7 +42,7 @@ ball = pygame.Rect(
 
 size = (window_width,window_height)
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Pong")
+pygame.display.set_caption("Pong Champions With RTX")
 
 font = pygame.font.Font('Font/Font.ttf', 50)
 
@@ -155,6 +155,9 @@ def game():
              True,
              WHITE
         )
+
+        title_text = font.render(str(int(clock.get_fps())), True, WHITE)
+        screen.blit(title_text, (20, 20))
 
         score_rect = score_text.get_rect(center=(window_width // 2, 30))
         screen.blit(score_text, score_rect)
