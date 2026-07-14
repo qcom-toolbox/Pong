@@ -185,6 +185,101 @@ def game():
 
         clock.tick(60)
 
+def game_with_ai():
+    global running, ball_speed_x, ball_speed_y, score_1, score_2
+    while running:
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_w]:
+            player_1.y -= 5
+
+        if keys[pygame.K_s]:
+            player_1.y += 5
+
+#            if keys[pygame.K_UP]:
+#                player_2.y -= 5
+
+#            if keys[pygame.K_DOWN]:
+#                player_2.y += 5
+
+        if player_1.top < 0:
+                player_1.top = 0
+
+        if player_1.bottom > window_height:
+                player_1.bottom = window_height
+
+        if player_2.top < 0:
+                player_2.top = 0
+
+        if player_2.bottom > window_height:
+                player_2.bottom = window_height
+
+        ball.x += ball_speed_x
+        ball.y += ball_speed_y
+
+        if ball.top <= 0 or ball.bottom >= window_height:
+            ball_speed_y *= -1
+
+        if ball.colliderect(player_1):
+            ball.left = player_1.right
+            ball_speed_x *= -1
+
+        if ball.colliderect(player_2):
+            ball.right = player_2.left
+            ball_speed_x *= -1
+
+        if ball.left <=0:
+             score_2 += 1
+             reset_ball()
+
+        if ball.right >= window_width:
+             score_1 += 1
+             reset_ball()
+
+        screen.blit(bg, (0, 0))
+
+        pygame.draw.rect(screen,WHITE,player_1)
+
+        score_text = font.render(
+             f"{score_1}     {score_2}",
+             True,
+             WHITE
+        )
+
+        title_text = font.render(str(int(clock.get_fps())), True, WHITE)
+        screen.blit(title_text, (20, 20))
+
+        score_rect = score_text.get_rect(center=(window_width // 2, 30))
+        screen.blit(score_text, score_rect)
+
+        if score_1 == 10 or score_2 == 10:
+            winner_text = font.render(
+                "Player 1 Wins!" if score_1 == 10 else "Player 2 Wins!",
+                True,
+                WHITE
+            )
+            winner_rect = winner_text.get_rect(center=(window_width // 2, window_height // 2))
+            screen.blit(winner_text, winner_rect)
+            pygame.display.update()
+            pygame.time.delay(3000)
+            reset_score()
+            reset_ball()
+            start_menu()
+
+
+        pygame.draw.rect(screen,WHITE,player_2)
+
+        screen.blit(ball_texture, ball)
+
+        pygame.display.update()
+
+        clock.tick(60)
+
 def start_menu():
 
     while True:
@@ -197,20 +292,20 @@ def start_menu():
 #        screen.blit(title_text, title_rect)
 
         play_button = pygame.Rect(window_width // 2 - 70, window_height // 2 - 25, 140, 50)
-#        solo_button = pygame.Rect(window_width // 2 - 70, window_height // 2 + 5, 140, 50)
+        solo_button = pygame.Rect(window_width // 2 - 70, window_height // 2 + 5, 140, 50)
         quit_button = pygame.Rect(window_width // 2 - 70, window_height // 2 + 55, 140, 50)
 
         pygame.draw.rect(screen, WHITE if play_button.collidepoint(mouse) else BLACK, play_button)
-#        pygame.draw.rect(screen, WHITE if solo_button.collidepoint(mouse) else BLACK, solo_button)
+        pygame.draw.rect(screen, WHITE if solo_button.collidepoint(mouse) else BLACK, solo_button)
         pygame.draw.rect(screen, WHITE if quit_button.collidepoint(mouse) else BLACK, quit_button)
 
         play_text = font.render("Play", True, WHITE)
         play_rect = play_text.get_rect(center=play_button.center)
         screen.blit(play_text, play_rect)
 
-        # solo_text = font.render("Solo", True, WHITE)
-        # solo_rect = solo_text.get_rect(center=solo_button.center)
-        # screen.blit(solo_text, solo_rect)
+        solo_text = font.render("Solo", True, WHITE)
+        solo_rect = solo_text.get_rect(center=solo_button.center)
+        screen.blit(solo_text, solo_rect)
 
         quit_text = font.render("Quit", True, WHITE)
         quit_rect = quit_text.get_rect(center=quit_button.center)
@@ -227,10 +322,10 @@ def start_menu():
                 if play_button.collidepoint(mouse):
                     game()
 
-#                if solo_button.collidepoint(mouse):
-#                    global ai_mode
-#                    ai_mode = 1
-#                    game()
+                if solo_button.collidepoint(mouse):
+                    global ai_mode
+                    ai_mode = 1
+                    game_with_ai()
 
                 if quit_button.collidepoint(mouse):
                     pygame.quit()
